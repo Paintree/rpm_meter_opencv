@@ -1,26 +1,26 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include <filesystem>
+#include <FileExplorer.hpp>
+
 
 int main (int argc, char** argv) {
-    std::string imgFolder = "img";
-    std::string fileName = "Chad.png";
-    std::filesystem::path currentPath = std::filesystem::current_path();
-    std::filesystem::path imgFilePath = currentPath / imgFolder / fileName;
-    // Display image
 
+    FileExplorer Image;
+    Image.openFileExplorer();
+
+    // Load image
     cv::Mat img;
-    img = cv::imread(imgFilePath.generic_string());
+    std::cout << "Loading image...\n";
+    img = cv::imread(Image.getFilePath());
     if (!img.data) {
         std::cout << "Failed to load image :( \n";
         return -1;
     }
-    cv::namedWindow("Loaded image", cv::WINDOW_AUTOSIZE);
-    cv::imshow("Loaded image", img);
-    
-    while (1) {
-
-    }
+    std::cout << "Loaded image: " + Image.getFileName() + "\n";
+    // Display image
+    cv::namedWindow(Image.getFileName(), cv::WINDOW_AUTOSIZE);
+    cv::imshow(Image.getFileName(), img);
+    cv::waitKey(0);
 
     return 0;
 }

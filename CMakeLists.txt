@@ -13,7 +13,7 @@ project(${PROJECT_NAME} LANGUAGES C CXX)
 
 # set(-DOpenCV_STATIC)
 set(CMAKE_CXX_STANDARD 20)
-set(INCLUDE_PATH "${PROJECT_SOURCE_DIR}/include")
+set(INCLUDE_PATH "${PROJECT_SOURCE_DIR}/inc")
 set(SRC_PATH "${PROJECT_SOURCE_DIR}/src")
 set(BUILD_DIR "${PROJECT_SOURCE_DIR}/build")
 set(OpenCV_DIR "${PROJECT_SOURCE_DIR}/build_opencv")
@@ -31,6 +31,6 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 file(GLOB_RECURSE USER_SRCS "${SRC_PATH}/*.c" "${SRC_PATH}/*.cpp")
 add_executable(${TARGET} ${USER_SRCS})
 
-target_link_libraries(${TARGET} PRIVATE ${OpenCV_LIBS})
+target_link_libraries(${TARGET} PRIVATE ${OpenCV_LIBS} -static)
 
-set_target_properties(${TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR})
+# set_target_properties(${TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR})
