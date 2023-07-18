@@ -1,4 +1,4 @@
-TARGET = rpm_meter.exe
+TARGET = rpm_meter
 
 define shell_out
 $(shell $(1))
@@ -8,31 +8,33 @@ PROJECT_DIR = $(call shell_out, cd)
 BUILD_DIR = build
 EXTERNAL_DIR = external
 OPENCV_DIR = opencv
-OPENCV_BUILD_DIR = build_opencv
+
 
 .PHONY: build cmake all
 
-all: opencv_build build
+all: clean_all build_opencv build
 
 cmake:
-	cmake -G "MinGW Makefiles" . -B ${PROJECT_DIR}/${BUILD_DIR}
+	cmake -G "MinGW Makefiles" . -B ${PROJECT_DIR}/${BUILD_DIR}/${TARGET}
 
 cmake_opencv:
-	cmake -G "MinGW Makefiles" -DWITH_MSMF=OFF  -DWITH_OBSENSOR=OFF -DBUILD_SHARED_LIBS=OFF ${PROJECT_DIR}/${EXTERNAL_DIR}/${OPENCV_DIR} -B ${PROJECT_DIR}/${OPENCV_BUILD_DIR}
+	cmake -G "MinGW Makefiles" -DWITH_MSMF=OFF -DWITH_OBSENSOR=OFF -DBUILD_SHARED_LIBS=OFF ${PROJECT_DIR}/${EXTERNAL_DIR}/${OPENCV_DIR} -B ${PROJECT_DIR}/${BUILD_DIR}/${OPENCV_DIR}
 
 build: cmake
-	${MAKE} -C ${BUILD_DIR}
+	${MAKE} -C ${PROJECT_DIR}/${BUILD_DIR}/${TARGET}
 	@echo "Built successfully!"
 
-opencv_build: cmake_opencv
-	${MAKE} -C ${PROJECT_DIR}/${OPENCV_BUILD_DIR}
+build_opencv: cmake_opencv
+	${MAKE} -C ${PROJECT_DIR}/${BUILD_DIR}/${OPENCV_DIR}
 
-opencv_clean:
-	rmdir /s /q ${PROJECT_DIR}\${OPENCV_BUILD_DIR}
+clean_opencv:
+	if exist ${PROJECT_DIR}\${BUILD_DIR}\${OPENCV_DIR} rmdir /s /q ${PROJECT_DIR}\${BUILD_DIR}\${OPENCV_DIR}
+
 clean:
-	rmdir /s /q ${PROJECT_DIR}\${BUILD_DIR}
+	if exist ${PROJECT_DIR}\${BUILD_DIR}\${TARGET} rmdir /s /q ${PROJECT_DIR}\${BUILD_DIR}\${TARGET}
 
-clean_all: opencv_clean clean
+clean_all:
+	if exist ${PROJECT_DIR}\${BUILD_DIR} rmdir /s /q ${PROJECT_DIR}\${BUILD_DIR}
 
-start:
-	${PROJECT_DIR}\${BUILD_DIR}\${TARGET}
+run:
+	${PROJECT_DIR}\${BUILD_DIR}\${TARGET}\${TARGET}.exe
