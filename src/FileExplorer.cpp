@@ -1,9 +1,17 @@
 #include <FileExplorer.hpp>
+#ifdef WIN32
 #include <windows.h>
 #include <commdlg.h>
+#endif
+#ifdef UNIX
+#include <cstdlib>
+#include <gtk/gtk.h>
+#endif
 #include <iostream>
+#include <filesystem>
 
 void FileExplorer::openFileExplorer() {
+    #ifdef WIN32
     OPENFILENAME ofn;
     TCHAR szFile[MAX_PATH] = { 0 };
 
@@ -36,6 +44,10 @@ void FileExplorer::openFileExplorer() {
         else
             std::cout << "No file selected." << std::endl;
     }
+    #endif
+    
+    std::string cmd = "xdg-open \"" + std::string(std::filesystem::current_path()) + "\"";
+    system(cmd.c_str());
 }
 
 std::string FileExplorer::getFilePath() {
