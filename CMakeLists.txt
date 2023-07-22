@@ -25,10 +25,13 @@ set(BUILD_DIR "${PROJECT_SOURCE_DIR}/build")
 set(OpenCV_DIR "${BUILD_DIR}/opencv")
 include_directories("${INCLUDE_PATH}")
 
-
-
+# Include OpenCV
 
 find_package(OpenCV REQUIRED)
+option(BUILD_WITH_STATIC_CRT "help string" OFF)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+# Include GTK
 
 if (UNIX)
 find_package(PkgConfig REQUIRED)
@@ -38,9 +41,7 @@ link_directories(${GTK_LIBRARY_DIRS})
 add_definitions(${GTK_CFLAGS_OTHER})
 endif (UNIX)
 
-option(BUILD_WITH_STATIC_CRT "help string" OFF)
-
-include_directories(${OpenCV_INCLUDE_DIRS})
+# Add SRCs to Target
 
 file(GLOB_RECURSE USER_SRCS "${SRC_PATH}/*.c" "${SRC_PATH}/*.cpp")
 add_executable(${TARGET} ${USER_SRCS})
@@ -50,7 +51,6 @@ if (WIN32)
 endif (WIN32)
 if (UNIX)
     target_link_libraries(${TARGET} PRIVATE ${OpenCV_LIBS} ${GTK_LIBRARIES})
-    # target_compile_definitions(${TARGET} PRIVATE ${GTKMM_CFLAGS_OTHER})
-    # target_link_directories(${TARGET} PRIVATE ${GTKMM_LIBRARY_DIRS})
 endif(UNIX)
 
+add_subdirectory("${PROJECT_SOURCE_DIR}/tests")

@@ -1,4 +1,5 @@
 TARGET = rpm_meter
+TARGET_TESTS = rpm_meter_tests
 
 define shell_out
 $(shell $(1))
@@ -6,6 +7,7 @@ endef
 
 
 BUILD_DIR = build
+TESTS_DIR = tests
 EXTERNAL_DIR = external
 OPENCV_DIR = opencv
 
@@ -43,6 +45,9 @@ clean_all:
 run:
 	${PROJECT_DIR}\${BUILD_DIR}\${TARGET}\${TARGET}.exe
 
+run_tests:
+	${PROJECT_DIR}/${BUILD_DIR}/${TARGET}/${TESTS_DIR}/${TARGET_TESTS}.exe
+
 
 else
     UNAME_S := $(shell uname -s)
@@ -75,8 +80,8 @@ clean_all:
 run:
 	${PROJECT_DIR}/${BUILD_DIR}/${TARGET}/${TARGET}
 
-install:
-	${MAKE} ${PROJECT_DIR}/${BUILD_DIR}/${TARGET} install
+run_tests:
+	${PROJECT_DIR}/${BUILD_DIR}/${TARGET}/${TESTS_DIR}/${TARGET_TESTS}
 
 deps:
 	sudo apt-get install libgtk-3-dev
