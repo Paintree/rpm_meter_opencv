@@ -12,9 +12,6 @@ class FileExplorer
     private:
         std::string _filePath;
         std::string _fileName;
-#ifdef UNIX
-        void openFileDialog(GtkWidget *widget, gpointer data);
-#endif
 
 };
 

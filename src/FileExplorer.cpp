@@ -10,26 +10,6 @@
 #include <iostream>
 #include <filesystem>
 
-#ifdef UNIX
-void FileExplorer::openFileDialog(GtkWidget *widget, gpointer data) {
-    GtkWidget *dialog;
-    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-    gint res;
-
-    dialog = gtk_file_chooser_dialog_new("Open File", GTK_WINDOW(data), action, "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL);
-
-    res = gtk_dialog_run(GTK_DIALOG(dialog));
-    if (res == GTK_RESPONSE_ACCEPT) {
-        char *filepath;
-        filepath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-        _filePath = filepath;
-        g_free(filepath);
-    }
-
-    gtk_widget_destroy(dialog);
-}
-#endif
-
 void FileExplorer::openFileExplorer(int argc, char *argv[]) {
     #ifdef WIN32
     OPENFILENAME ofn;
@@ -73,7 +53,21 @@ void FileExplorer::openFileExplorer(int argc, char *argv[]) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    openFileDialog(NULL, window);
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    gint res;
+
+    window = gtk_file_chooser_dialog_new("Open File", GTK_WINDOW(window), action, "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL);
+
+    res = gtk_dialog_run(GTK_DIALOG(window));
+    if (res == GTK_RESPONSE_ACCEPT) {
+        char *filepath;
+        filepath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(window));
+        _filePath = filepath;
+        g_free(filepath);
+    }
+
+    gtk_widget_destroy(window);
+
     std::cout << "Selected file: " << _filePath << std::endl;
     size_t lastSeparator = _filePath.find_last_of("/");
     _fileName = _filePath.substr(lastSeparator + 1);
