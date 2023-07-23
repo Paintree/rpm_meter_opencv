@@ -84,7 +84,7 @@ run_tests:
 	${PROJECT_DIR}/${BUILD_DIR}/${TARGET}/${TESTS_DIR}/${TARGET_TESTS}
 
 deps:
-	sudo apt-get install libgtk-3-dev
+	sudo apt-get install libgtk-3-dev libgtk2.0-dev pkg-config
 
 
     endif

@@ -10,7 +10,27 @@
 #include <iostream>
 #include <filesystem>
 
-void FileExplorer::openFileExplorer() {
+#ifdef UNIX
+void FileExplorer::openFileDialog(GtkWidget *widget, gpointer data) {
+    GtkWidget *dialog;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    gint res;
+
+    dialog = gtk_file_chooser_dialog_new("Open File", GTK_WINDOW(data), action, "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL);
+
+    res = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (res == GTK_RESPONSE_ACCEPT) {
+        char *filepath;
+        filepath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+        _filePath = filepath;
+        g_free(filepath);
+    }
+
+    gtk_widget_destroy(dialog);
+}
+#endif
+
+void FileExplorer::openFileExplorer(int argc, char *argv[]) {
     #ifdef WIN32
     OPENFILENAME ofn;
     TCHAR szFile[MAX_PATH] = { 0 };
@@ -33,9 +53,9 @@ void FileExplorer::openFileExplorer() {
         std::string selectedFilePath = szFile;
 #endif
         std::cout << "Selected file: " << selectedFilePath << std::endl;
-        filePath = selectedFilePath;
-        size_t lastSeparator = filePath.find_last_of("\\/");
-        fileName = filePath.substr(lastSeparator + 1);
+        _filePath = selectedFilePath;
+        size_t lastSeparator = _filePath.find_last_of("\\/");
+        _fileName = _filePath.substr(lastSeparator + 1);
     }
     else {
         DWORD error = CommDlgExtendedError();
@@ -45,15 +65,24 @@ void FileExplorer::openFileExplorer() {
             std::cout << "No file selected." << std::endl;
     }
     #endif
-    
-    std::string cmd = "xdg-open \"" + std::string(std::filesystem::current_path()) + "\"";
-    system(cmd.c_str());
+
+    GtkWidget *window;
+
+    gtk_init(&argc, &argv);
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    openFileDialog(NULL, window);
+    std::cout << "Selected file: " << _filePath << std::endl;
+    size_t lastSeparator = _filePath.find_last_of("/");
+    _fileName = _filePath.substr(lastSeparator + 1);
 }
 
 std::string FileExplorer::getFilePath() {
-    return filePath;
+    return _filePath;
 }
 
 std::string FileExplorer::getFileName() {
-    return fileName;
+    return _fileName;
 }

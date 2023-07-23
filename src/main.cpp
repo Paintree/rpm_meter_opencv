@@ -3,10 +3,10 @@
 #include <FileExplorer.hpp>
 
 
-int main (int argc, char** argv) {
+int main (int argc, char *argv[]) {
 
     FileExplorer Image;
-    Image.openFileExplorer();
+    Image.openFileExplorer(argc, argv);
 
     // Load image
     cv::Mat img;
