@@ -46,6 +46,8 @@ void FileExplorer::openFileExplorer(int argc, char *argv[]) {
     }
     #endif
 
+    #ifdef UNIX
+
     GtkWidget *window;
 
     gtk_init(&argc, &argv);
@@ -71,6 +73,8 @@ void FileExplorer::openFileExplorer(int argc, char *argv[]) {
     std::cout << "Selected file: " << _filePath << std::endl;
     size_t lastSeparator = _filePath.find_last_of("/");
     _fileName = _filePath.substr(lastSeparator + 1);
+
+    #endif
 }
 
 std::string FileExplorer::getFilePath() {
